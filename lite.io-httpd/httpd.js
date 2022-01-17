@@ -2,19 +2,36 @@ var liteio = require('./lite_io_httpd');
 
 liteio.work("--exec httpd --httpd_port 8083 --httpd_home /opt/www --httpd_index index.html", httpd_callback);
 
-function httpd_callback(fd, b, sz, type)
+function arr2str(b)
+{
+  return String.fromCharCode.apply(null, new Uint16Array(b));
+}
+
+function httpd_callback(fd, uri, sz, type)
 {
   var html;
+  console.log("-------------------------------");
+  console.log( arr2str(uri) );
+  var _uri = arr2str(uri).split('?');
+
+  console.log(_uri[0]);
+  console.log(_uri[1]);
+  console.log("-------------------------------");
+
   switch(type)
   {
     case  0xE0001010:
-      if ( b == '/network' )
+      if ( _uri[0] == '/network' )
       {
         html  = "HTTP/1.1 200 OK\r\n";
+        html += "Content-Type: text/html\r\n";
         html += "\r\n";
-        html += "network\r\n";
+        html += "<form method=post action='/network2?test=sample'>";
+        html += "<input type=text name='id'>";
+        html += "<input type=submit>";
+        html += "</form>";
       }
-      else if ( b == '/network2' )
+      else if ( _uri[0] == '/network2' )
       {
         html  = "HTTP/1.1 200 OK\r\n";
         html += "\r\n";
