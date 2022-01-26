@@ -10,13 +10,13 @@ function arr2str(b)
 function httpd_callback(fd, uri, sz, type)
 {
   var html;
-  console.log("-------------------------------");
-  console.log( arr2str(uri) );
+  // console.log("-------------------------------");
+  // console.log( arr2str(uri) );
   var _uri = arr2str(uri).split('?');
 
-  console.log(_uri[0]);
-  console.log(_uri[1]);
-  console.log("-------------------------------");
+  // console.log(_uri[0]);
+  // console.log(_uri[1]);
+  // console.log("-------------------------------");
 
   switch(type)
   {
@@ -27,7 +27,8 @@ function httpd_callback(fd, uri, sz, type)
         html += "Content-Type: text/html\r\n";
         html += "\r\n";
         html += "<form method=post action='/network2?test=sample'>";
-        html += "<input type=text name='id'>";
+        //html += "<input type=text name='id'>";
+        html += "{'key0':'kv0'}";
         html += "<input type=submit>";
         html += "</form>";
       }
@@ -36,6 +37,22 @@ function httpd_callback(fd, uri, sz, type)
         html  = "HTTP/1.1 200 OK\r\n";
         html += "\r\n";
         html += "network2\r\n";
+      }
+      else if ( _uri[0] == '/debug' )
+      {
+        html  = "HTTP/1.1 200 OK\r\n";
+        html += "\r\n";
+
+        if ( _uri[1] == 'on')
+        {
+          liteio.debug(1);
+          html += "enabled debug mode\r\n";
+        }
+        else
+        {
+          liteio.debug(0);
+          html += "disabled debug mode\r\n";
+        }
       }
       else
       {
